@@ -1,0 +1,47 @@
+<bench-config>
+   <master
+         bindAddress="${127.0.0.1:master.address}"
+         port="${21031:master.port}"/>
+   <benchmark
+         initSize="${2:Islaves}"
+         maxSize="${2:slaves}"
+         increment="1">
+      <DestroyWrapper
+            runOnAllSlaves="true"/>
+      <StartCluster
+            staggerSlaveStartup="true"
+            delayAfterFirstSlaveStarts="5000"
+            delayBetweenStartingSlaves="1000"/>
+      <ClusterValidation
+            passiveReplication="false"
+            partialReplication="true"/>
+      <ClearCluster />
+      <WebSessionWarmup
+            passiveReplication="false"
+            numberOfKeys="100000"
+            sizeOfValue="1000"
+            numOfThreads="2"
+            transactionSize="40"
+            />
+      <ResetStats />
+      <WebSessionBenchmark
+            perThreadSimulTime="300"
+            writeTxWorkload="10,10;10,10"
+            readTxWorkload="20"
+            noContention="false"
+            writeTransactionPercentage="80"
+            coordinatorParticipation="true"
+            />
+      <CacheSize
+            statName="CACHE_SIZE" />
+      <CsvReportGeneration/>
+   </benchmark>
+   <products>
+      <infinispan4>
+         <config name="ispn.xml"/>
+      </infinispan4>
+   </products>
+   <reports>
+      <report name="Reports" />
+   </reports>
+</bench-config>
