@@ -23,16 +23,14 @@ Execute the following commands to compile and create the distribution folder:
 1.  copy the <code>www/</code> folder to you apache HTML folder
 
     (important!) make sure you have write permission in that folder
-    
-    <code>$ #assuming your apache web server is getting the HMTL from /var/www</code>
-    
-    <code>$ export WEB=/var/www/example;</code>
-    
-    <code>$ mkdir ${WEB}</code>
-    
-    <code>$ cp -r ${WORKING_DIR}/www/* ${WEB}</code>
-    
-    <code>$ chmod -R +w ${WEB}</code>    
+
+    <pre>
+    $ #assuming your apache web server is getting the HMTL from /var/www
+    $ export WEB=/var/www/example;
+    $ mkdir ${WEB}
+    $ cp -r ${WORKING_DIR}/www/* ${WEB}
+    $ chmod -R +w ${WEB}
+    </pre>
     
 2.  configure the csv reporter by editing the file <code>dist/conf/config.properties</code>
 
@@ -79,11 +77,11 @@ Execute the following commands to compile and create the distribution folder:
 
 2.  go to the master machine and execute the following
 
-    <code>$ ssh \<username\>@\<master machine IP or hostname\><code>
-    
-    <code>$ cd /tmp/dist/</code>
-    
-    <code>$ ./bin/benchmark.sh -i \<number of nodes\> \<list of hostnames or IP addresses\></code>    
+    <pre>
+    $ ssh [username]>@[master machine IP or hostname]
+    $ cd /tmp/dist/
+    $ ./bin/benchmark.sh -i [number of nodes] [list of hostnames or IP addresses]
+    </pre>
 
 3.  If you have the apache web server installed, point your browser to <code>http://\<master machine IP or hostname\>/example</code>
     Otherwise, check the file defined in <b>reporter.output_file</b>
