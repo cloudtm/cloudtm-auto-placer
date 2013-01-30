@@ -115,6 +115,8 @@ for slave in $SLAVES; do
   echo "${RADARGUN_HOME}/bin/beforeBenchmark.sh ${slave}:${JMX_SLAVES_PORT}" > ~/beforeBenchmark.sh
 done
 
+chmod +x ~/beforeBenchmark.sh
+
 echo "Slaves started in $SLAVES"
 echo $SLAVES > slaves
 

@@ -7,7 +7,7 @@ if [ "x$RADARGUN_HOME" = "x" ]; then DIRNAME=`dirname $0`; RADARGUN_HOME=`cd $DI
 
 LOG=${RADARGUN_HOME}/beforeBenchmark.out
 SLEEP=60
-CSV_CP=${RADARGUN_HOME}/lib/WpmCsvReporter.jar:¢{RADARGUN_HOME}/conf
+CSV_CP=${RADARGUN_HOME}/lib/WpmCsvReporter.jar:${RADARGUN_HOME}/conf
 CSV_CLASS="eu.cloudtm.reporter.CsvReporter"
 
 if [ "$1" == "" ]; then
@@ -49,7 +49,7 @@ sleep ${FIRST_SLEEP}
 
 stop() {
 log "Stop benchmark"
-${RADARGUN_HOME}/bin/stopBenchmark.sh `cat ~/dp_tpcc/slaves` >> ${LOG} 2>&1
+${RADARGUN_HOME}/bin/stopBenchmark.sh `cat ${RADARGUN_HOME}/slaves` >> ${LOG} 2>&1
 }
 
 touch ${LOG}
