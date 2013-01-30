@@ -25,11 +25,11 @@
             />
       <ResetStats />
       <WebSessionBenchmark
-            perThreadSimulTime="300"
+            perThreadSimulTime="3000"
             writeTxWorkload="10,10;10,10"
             readTxWorkload="20"
             noContention="false"
-            writeTransactionPercentage="80"
+            writeTransactionPercentage="20"
             coordinatorParticipation="true"
             />
       <CacheSize

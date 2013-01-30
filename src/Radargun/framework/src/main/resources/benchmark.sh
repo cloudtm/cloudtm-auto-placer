@@ -91,6 +91,7 @@ if [ -n "$N_SLAVES" ] ; then
     SLAVE_COUNT="$N_SLAVES -i $N_SLAVES"
 fi
 
+echo "${RADARGUN_HOME}/bin/beforeBenchmark.sh" > ~/beforeBenchmark.sh
 
 #start gossip router (background)
 
@@ -111,6 +112,7 @@ for slave in $SLAVES; do
   TOEXEC="$REMOTE_CMD -l $SSH_USER $slave '$CMD'"
   echo "$TOEXEC"
   eval $TOEXEC
+  echo "${RADARGUN_HOME}/bin/beforeBenchmark.sh ${slave}:${JMX_SLAVES_PORT}" > ~/beforeBenchmark.sh
 done
 
 echo "Slaves started in $SLAVES"
