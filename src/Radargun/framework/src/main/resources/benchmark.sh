@@ -92,6 +92,12 @@ if [ -n "$N_SLAVES" ] ; then
 fi
 
 
+#start gossip router (background)
+
+GOSSIP_ROUTER_CP=${RADARGUN_HOME}/plugins/infinispan52cloudtm/lib/jgroups*.jar
+
+java -cp ${GOSSIP_ROUTER_CP} -Djava.net.preferIPv4Stack=true org.jgroups.stack.GossipRouter > gossip_router.out 2>&1 &
+
 ####### first start the master
 . ${RADARGUN_HOME}/bin/master.sh -s ${SLAVE_COUNT} -m ${MASTER}
 PID_OF_MASTER_PROCESS=$RADARGUN_MASTER_PID

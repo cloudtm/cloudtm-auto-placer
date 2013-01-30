@@ -16,7 +16,7 @@ cd -
 
 mkdir -p ${DIST} 2>/dev/null
 
-cp -r ${SRC}/Radargun/target/distribution/Radargun-1.1.1-SNAPSHOT/* ${DIST}/
+cp -r ${SRC}/Radargun/target/distribution/RadarGun-1.1.1-SNAPSHOT/* ${DIST}/
 cp ${SRC}/Csv-reporter/dist/lib/WpmCsvReporter.jar  ${DIST}/lib/
 cp ${SRC}/Csv-reporter/config.properties ${DIST}/conf
 

@@ -164,6 +164,9 @@ public class ClusterValidationStage extends AbstractDistStage {
 
    private int replicationCount() throws Exception {
       int clusterSize = getActiveSlaveCount();
+       if (clusterSize == 1) {
+           return 1;
+       }
       int replicaCount = 0;
       for (int i = 0; i < clusterSize; i++) {
          int currentSlaveIndex = getSlaveIndex();

@@ -37,9 +37,9 @@
       <CsvReportGeneration/>
    </benchmark>
    <products>
-      <infinispan4>
+      <infinispan52cloudtm>
          <config name="ispn.xml"/>
-      </infinispan4>
+      </infinispan52cloudtm>
    </products>
    <reports>
       <report name="Reports" />

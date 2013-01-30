@@ -125,18 +125,6 @@ D_VARS="${D_VARS} -Dcom.sun.management.jmxremote.port=$JMX_MASTER_PORT"
 D_VARS="${D_VARS} -Dcom.sun.management.jmxremote.authenticate=false"
 D_VARS="${D_VARS} -Dcom.sun.management.jmxremote.ssl=false"
 
-#start gossip router (background)
-
-GOSSIP_ROUTER_CP=${RADARGUN_HOME}/plugins52cloudtm/lib/jgroups*.jar
-
-java -cp ${GOSSIP_ROUTER_CP} -Djava.net.preferIPv4Stack=true org.jgroups.stack.GossipRouter > gossip_router.out 2>&1 & 
-
-#start csv reporter (background)                                                                                   
-
-CSV_REPORTER_CP=${RADARGUN_HOME}/lib/WpmCsvReporter.jar
-
-java -cp ${CSV_REPORTER_CP} eu.cloudtm.reporter.CsvReporter ${RADARGUN_HOME}/conf/config.properties > csv-reporter.out 2>&1 &
-
 java ${JVM_OPTS} -classpath $CP ${D_VARS} $SLAVE_COUNT_ARG $SLAVE_COUNT_ARG_I org.radargun.LaunchMaster -config ${CONFIG} > stdout_master.out 2>&1 &
 export RADARGUN_MASTER_PID=$!
 HOST_NAME=`hostname`
