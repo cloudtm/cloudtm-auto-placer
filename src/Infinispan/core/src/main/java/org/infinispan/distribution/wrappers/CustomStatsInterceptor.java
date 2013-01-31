@@ -9,6 +9,7 @@ import org.infinispan.commands.write.PutKeyValueCommand;
 import org.infinispan.configuration.cache.Configuration;
 import org.infinispan.context.InvocationContext;
 import org.infinispan.context.impl.TxInvocationContext;
+import org.infinispan.distribution.DistributionManager;
 import org.infinispan.factories.ComponentRegistry;
 import org.infinispan.factories.GlobalComponentRegistry;
 import org.infinispan.factories.annotations.Inject;
@@ -22,7 +23,6 @@ import org.infinispan.remoting.rpc.RpcManager;
 import org.infinispan.remoting.transport.Transport;
 import org.infinispan.remoting.transport.jgroups.CommandAwareRpcDispatcher;
 import org.infinispan.remoting.transport.jgroups.JGroupsTransport;
-import org.infinispan.stats.NodeScopeStatisticCollector;
 import org.infinispan.stats.TransactionsStatisticsRegistry;
 import org.infinispan.stats.translations.ExposedStatistics.IspnStats;
 import org.infinispan.transaction.TransactionTable;
@@ -56,7 +56,8 @@ public abstract class CustomStatsInterceptor extends BaseCustomInterceptor {
    private TransactionTable transactionTable;
    private Configuration configuration;
    private RpcManagerWrapper rpcManagerWrapper;
-   
+   private DistributionManager distributionManager;
+
    @Inject
    public void inject(TransactionTable transactionTable) {
       this.transactionTable = transactionTable;
@@ -69,19 +70,20 @@ public abstract class CustomStatsInterceptor extends BaseCustomInterceptor {
       replace();
       log.info("Initializing the TransactionStatisticsRegistry");
       TransactionsStatisticsRegistry.init(this.configuration);
+      distributionManager = cache.getAdvancedCache().getDistributionManager();
    }
 
    @Override
    public Object visitSetClassCommand(InvocationContext ctx, SetClassCommand command) throws Throwable {
-     log.tracef("visitSetClassCommand invoked");
-     Object ret;
-     if(ctx.isInTxScope()){
-        this.initStatsIfNecessary(ctx);
-     }
-     TransactionsStatisticsRegistry.setTransactionalClass(command.getTransactionalClass());
-     //TransactionsStatisticsRegistry.putThreadClasses(Thread.currentThread().getId(), command.getTransactionalClass());
-     //System.out.println(threadClasses.get(Thread.currentThread().getId()));
-     return invokeNextInterceptor(ctx, command);
+      log.tracef("visitSetClassCommand invoked");
+      Object ret;
+      if(ctx.isInTxScope()){
+         this.initStatsIfNecessary(ctx);
+      }
+      TransactionsStatisticsRegistry.setTransactionalClass(command.getTransactionalClass());
+      //TransactionsStatisticsRegistry.putThreadClasses(Thread.currentThread().getId(), command.getTransactionalClass());
+      //System.out.println(threadClasses.get(Thread.currentThread().getId()));
+      return invokeNextInterceptor(ctx, command);
    }
 
    @Override
@@ -298,7 +300,7 @@ public abstract class CustomStatsInterceptor extends BaseCustomInterceptor {
       RpcManager rpcManager = componentRegistry.getComponent(RpcManager.class);
       RpcManagerWrapper rpcManagerWrapper = new RpcManagerWrapper(rpcManager);
       componentRegistry.registerComponent(rpcManagerWrapper, RpcManager.class);
-	  this.rpcManagerWrapper = rpcManagerWrapper;
+      this.rpcManagerWrapper = rpcManagerWrapper;
    }
 
    private void initStatsIfNecessary(InvocationContext ctx){
@@ -529,7 +531,7 @@ public abstract class CustomStatsInterceptor extends BaseCustomInterceptor {
    public long getAvgWriteTxDuration(){
       return (Long)TransactionsStatisticsRegistry.getAttribute(IspnStats.WR_TX_SUCCESSFUL_EXECUTION_TIME);
    }
-   
+
    @ManagedAttribute(description = "Average aborted write transaction duration (in microseconds)")
    @Metric(displayName = "Average Aborted Write Transaction Duration")
    public long getAvgAbortedWriteTxDuration(){
@@ -738,7 +740,7 @@ public abstract class CustomStatsInterceptor extends BaseCustomInterceptor {
    @ManagedAttribute(description = "Average Local processing Get time (in microseconds)")
    @Metric(displayName = "Average Local Get time")
    public long getAvgLocalGetTime() {
-       return (Long)(TransactionsStatisticsRegistry.getAttribute((IspnStats.LOCAL_GET_EXECUTION)));
+      return (Long)(TransactionsStatisticsRegistry.getAttribute((IspnStats.LOCAL_GET_EXECUTION)));
    }
 
    @ManagedAttribute(description = "Average TCB time (in microseconds)")
@@ -752,22 +754,26 @@ public abstract class CustomStatsInterceptor extends BaseCustomInterceptor {
    public long getAvgNTCBTime() {
       return (Long)(TransactionsStatisticsRegistry.getAttribute((IspnStats.NTBC)));
    }
-   
+
    @ManagedAttribute(description = "Number of nodes in the cluster")
    @Metric(displayName = "Number of nodes")
    public long getNumNodes() {
-      return rpcManagerWrapper.getTransport().getMembers().size();
+      if(this.rpcManagerWrapper != null){
+         if(this.rpcManagerWrapper.getTransport() != null){
+            if(this.rpcManagerWrapper.getTransport().getMembers() != null){
+               return this.rpcManagerWrapper.getTransport().getMembers().size();
+            }
+         }
+      }
+
+      return 1;
    }
 
    @ManagedAttribute(description = "Number of replicas for each key")
    @Metric(displayName = "Replication Degree")
    public long getReplicationDegree(){
-      if(this.rpcManagerWrapper != null){
-	     if(this.rpcManagerWrapper.getTransport() != null){
-	        if(this.rpcManagerWrapper.getTransport().getMembers() != null){
-			   return this.rpcManagerWrapper.getTransport().getMembers().size();
-			}
-		 }
+      if(this.distributionManager != null){
+         return distributionManager.getReplicationDegree();
       }
 
       return 1;
@@ -777,7 +783,7 @@ public abstract class CustomStatsInterceptor extends BaseCustomInterceptor {
    @Metric(displayName = "Local Active Transactions")
    public long getLocalActiveTransactions() {
       if(transactionTable != null){
-	     return transactionTable.getLocalTxCount();
+         return transactionTable.getLocalTxCount();
       }
 
       return 0;
@@ -962,7 +968,7 @@ public abstract class CustomStatsInterceptor extends BaseCustomInterceptor {
    }
 
    @ManagedOperation(description = "Average transaction arrival rate, originated locally and remotely (in transaction " +
-           "per second) per class")
+         "per second) per class")
    @Operation(displayName = "Average Transaction Arrival Rate per class")
    public double getAvgTxArrivalRateParam(String transactionalClass){
       return (Double)TransactionsStatisticsRegistry.getAttribute(IspnStats.ARRIVAL_RATE,transactionalClass);
@@ -975,7 +981,7 @@ public abstract class CustomStatsInterceptor extends BaseCustomInterceptor {
    }
 
    @ManagedOperation(description = "Percentage of Write transaction executed in all successfully executed " +
-           "transactions (local transaction only) per class")
+         "transactions (local transaction only) per class")
    @Operation(displayName = "Percentage of Successfully Write Transactions per class")
    public double getPercentageSuccessWriteTransactionsParam(String transactionalClass){
       return (Double)TransactionsStatisticsRegistry.getAttribute(IspnStats.SUCCESSFUL_WRITE_PERCENTAGE,transactionalClass);
