@@ -7,3 +7,26 @@ target/
 *.iml
 *.ipr
 *.iws
+
+# testsuite generated files/folders
+PutObjectStoreDirHere
+/query/person
+ObjectStore
+
+# generated rhq plugin xml
+rhq-plugin.xml
+
+# Compiled python files
+*.pyc
+
+# Jandex generated indexes
+*.idx
+
+# Persisted metadata
+*.dat
+
+# mac files
+.DS_Store
+
+#others
+*.log
