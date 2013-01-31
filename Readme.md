@@ -6,6 +6,14 @@ This package provides a demonstration of Auto Placer self-tunning. The requireme
 * Java 1.6.x
 * Apache Web Server with PHP (optional, only if you want to see the system performance in real time plots)
 
+##Description
+
+This software package demonstrates the advantage of using the auto placer optimization to improve the system's performance. The main goal is to optimize the system performance by adapting the keys location to the best place. By doing this, it is possible to reduce the communication costs avoiding fetch the data remotely.
+
+The software package is configured to a read dominant workload and the data access pattern is described by 90% of the time, it chooses a key from a subset of keys (making this subset to be moved).
+
+At each minute, the auto-placer optimization is triggered. Then, it checks the local and remote keys accesses and tries to move them to a best location.
+
 ##How to run it
 
 ###Compilation

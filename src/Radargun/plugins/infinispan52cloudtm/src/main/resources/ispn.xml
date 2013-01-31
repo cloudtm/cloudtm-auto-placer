@@ -62,6 +62,7 @@
                 versioningScheme="SIMPLE" />
         <dataPlacement
                 enabled="true"
+                maxNumberOfKeysToRequest="1000"
                 objectLookupFactory="org.infinispan.dataplacement.c50.C50MLObjectLookupFactory">
             <properties>
                 <property

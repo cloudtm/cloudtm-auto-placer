@@ -18,7 +18,7 @@
       <ClearCluster />
       <WebSessionWarmup
             passiveReplication="false"
-            numberOfKeys="100000"
+            numberOfKeys="10000"
             sizeOfValue="1000"
             numOfThreads="2"
             transactionSize="40"
@@ -27,9 +27,10 @@
       <WebSessionBenchmark
             perThreadSimulTime="3000"
             writeTxWorkload="10,10;10,10"
-            readTxWorkload="20"
+            readTxWorkload="50"
             noContention="false"
-            writeTransactionPercentage="20"
+            localityProbability="90"
+            writeTransactionPercentage="5"
             coordinatorParticipation="true"
             />
       <CacheSize
