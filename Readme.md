@@ -1,3 +1,5 @@
+<img src="images/logo.png" alt="Cloud-TM project" height="315" width="495"> 
+
 #Cloud-TM Auto Placer
 
 This package provides a demonstration of Auto Placer self-tunning. The requirement to run are:
@@ -13,6 +15,8 @@ This software package demonstrates the advantage of using the auto placer optimi
 The software package is configured to a read dominant workload and the data access pattern is described by 90% of the time, it chooses a key from a subset of keys (making this subset to be moved).
 
 At each minute, the auto-placer optimization is triggered. Then, it checks the local and remote keys accesses and tries to move them to a best location.
+
+<img src="images/screen.png" alt="Cloud-TM project" height="388" width="672"> 
 
 ##How to run it
 
